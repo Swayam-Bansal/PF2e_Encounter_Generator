@@ -17,7 +17,7 @@ A CLI-based encounter generator for Pathfinder 2e, built for the July 2025 Bootd
 ## Installation
 
 ```bash
-git clone https://github.com/yourusername/PF2e_Encounter_Generator.git
+git clone https://github.com/ySwayam-Bansal/PF2e_Encounter_Generator.git
 cd PF2e_Encounter_Generator
 pip install -r requirements.txt
 ```
