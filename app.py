@@ -23,7 +23,7 @@ import sqlite3, json, os, sys
 def create_database():
     monster_json_path = 'beastiary/monsters.json'
     if not os.path.exists(monster_json_path):
-        print("Monster data file not found. Please ensure 'monsters.json' exists in the current directory.")
+        print("Monster data file not found. Please ensure 'beastiary/monsters.json' exists")
         sys.exit(1)
     with open(monster_json_path, 'r') as monster_json:
         monster_data = json.load(monster_json)
@@ -100,6 +100,8 @@ def main():
     if not os.path.exists('monsters.db'):
         print("Database not found, creating...")
         create_database()
+        create_table('monsters.db') # Create the monsters table
+        print("Database 'monsters.db' created successfully.")
     else:
         print("Using existing database 'monsters.db'")
 
