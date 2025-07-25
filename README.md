@@ -25,7 +25,7 @@ pip install -r requirements.txt
 ## Usage
 
 ```bash
-python encounter_generator.py --party-size 4 --party-level 5 --difficulty moderate
+python app.py --party-size 4 --party-level 5 --difficulty moderate
 ```
 
 ## Contributing
