@@ -15,9 +15,9 @@ Features:
 """
 
 # Import necessary libraries
-# import sqlite3, requests, json, os, sys
 import sqlite3, json, os, sys
-# import constants
+import argparse
+import constants
 
 # Create a simple SQLite database to store monster data
 def create_database():
@@ -107,24 +107,42 @@ def main():
 
     conn = sqlite3.connect('monsters.db') # Connect to the SQLite database
 
+    def parse_arguments():
+        parser = argparse.ArgumentParser(description="Pathfinder 2e Enemy Encounter Generator")
+        parser.add_argument('--party-size', type=int, help="Size of the party (1-4)", required=True)
+        parser.add_argument('--party-level', type=int, help="Level of the party (1-20)", required=True)
+        parser.add_argument('--difficulty', type=str, choices=['easy', 'moderate', 'hard', 'severe'], 
+                            help="Difficulty level of the encounter", required=True)
+        args = parser.parse_args()
+
+        # Validate party size
+        if not (1 <= args.party_size <= 4):
+            print("Error: Party size must be between 1 and 4.")
+            sys.exit(1)
+
+        # Validate party level
+        if not (1 <= args.party_level <= 20):
+            print("Error: Party level must be between 1 and 20.")
+            sys.exit(1)
+
+        return args
+
     running = True
 
     while running:
         print("\nWelcome to the Pathfinder 2e Enemy Encounter Generator!")
-        get_party_size()
-        get_party_level()
-        terrain = input("Enter terrain type (e.g., forest, dungeon): ")
-        flag = False
+        args = parse_arguments()
 
-        try:
-            party_size = int(party_size)
-            party_level = int(party_level)
-            if party_size <= 0 and party_level <= 0:
-                print("Party size and level must be positive integers.")
-                continue
-        except ValueError:
-            print("Invalid input. Please enter numeric values for party size and level.")
-            continue
+        party_size = args.party_size
+        party_level = args.party_level
+        difficulty = args.difficulty
+
+        print(f"Party Size: {party_size}, Party Level: {party_level}, Difficulty: {difficulty}")
+        # TODO: Add logic to generate encounters based on the parsed arguments
+
+        running = False  # Exit after one run for now
+    conn.close()  # Close the database connection
+    print("Encounter generation complete. Thank you for using the Pathfinder 2e Enemy Encounter Generator!")
         
 if __name__ == '__main__':
     main()
