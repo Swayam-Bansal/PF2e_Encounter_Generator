@@ -1,6 +1,6 @@
 import os
 import requests
-from bs4 import BeautifulSoup
+
 from constants import (download_directory,  
                        raw_json_base, 
                        api_url)
@@ -18,7 +18,7 @@ if response.status_code != 200:
     print(f"Failed to retrieve data from {api_url}. Status code: {response.status_code}")
     exit()
 
-json_files = [item['name'] for item in response.json() if item['name'].endswith('.json')] # List comprehension to filter JSON files
+json_files = [item['name'] for item in response.json() if item['name'].endswith('.json') and item['name'].startswith('creature')]# List comprehension to filter JSON files
 print(f"Found {len(json_files)} JSON files from the Github API response.")
 
 # Download each JSON file
