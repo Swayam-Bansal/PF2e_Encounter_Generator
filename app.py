@@ -18,28 +18,64 @@ Features:
 import sqlite3, os, sys
 import argparse
 
-# def get_party_size():
-#     while True:
-#         try:
-#             party_size = int(input("Enter party size (1-4): "))
-#             if 1 <= party_size <= 4:
-#                 return party_size
-#             else:
-#                 print("Party size must be between 1 and 4.")
-#         except ValueError:
-#             print("Invalid input. Please enter a numeric value.")
+def generate_encounter(party_size, party_level, difficulty):
+    threat_levels = {"trivial": 10,
+                     "low": 15,
+                     "moderate": 20,
+                     "severe": 30,
+                     "extreme": 40
+	}
+    xp_budget = party_size * threat_levels[difficulty]
+    party_avg = party_level // party_size
+    lower_monster_bound = party_avg - 4
+    upper_monster_bound = party_avg + 4
 
-# def get_party_level():
-#     while True:
-#         try:
-#             party_level = int(input("Enter party level (1-20): "))
-#             if 1 <= party_level <= 20:
-#                 return party_level
-#             else:
-#                 print("Party level must be between 1 and 20.")
-#         except ValueError:
-#             print("Invalid input. Please enter a valid numeric value.")
+    monsterConn = sqlite3.connect("creatures.db")
+    monsterCurs = monsterConn.cursor()
 
+    temp_table_creation = '''
+            CREATE TEMP TABLE temp_table AS
+			SELECT *
+            FROM monsters 
+			WHERE level BETWEEN ? AND ?
+    '''
+    output = []
+
+    monsterCurs.execute(temp_table_creation, (lower_monster_bound, upper_monster_bound))
+
+    while xp_budget > 0:
+        
+        monster = monsterCurs.execute('''
+				SELECT name, level FROM temp_table ORDER BY RANDOM() LIMIT 1
+		''')
+        monsterVals = monster.fetchone()
+        print(f"Name: {monsterVals[0]}, Level: {monsterVals[1]}")
+
+        xp_ratio = party_level - monsterVals[1]
+		
+        match xp_ratio:
+                case 4:
+                    xp_budget -= 10
+                case 3:
+                    xp_budget -= 15
+                case 2:
+                    xp_budget -= 20
+                case 1:
+                    xp_budget -= 30
+                case 0:
+                    xp_budget -= 40
+                case -1:
+                    xp_budget -= 60
+                case -2:
+                    xp_budget -= 80
+                case -3:
+                    xp_budget -= 120
+                case -4:
+                    xp_budget -= 160
+                    
+        output.append(monster)
+    monsterConn.close()
+    return output
 
 def main():
 
@@ -47,7 +83,7 @@ def main():
         parser = argparse.ArgumentParser(description="Pathfinder 2e Enemy Encounter Generator")
         parser.add_argument('--party-size', type=int, help="Size of the party (1-4)", required=True)
         parser.add_argument('--party-level', type=int, help="Level of the party (1-20)", required=True)
-        parser.add_argument('--difficulty', type=str, choices=['easy', 'moderate', 'hard', 'severe'], 
+        parser.add_argument('--difficulty', type=str, choices=['trivial', 'low', 'moderate', 'severe', 'extreme'], 
                             help="Difficulty level of the encounter", required=True)
         args = parser.parse_args()
 
@@ -75,6 +111,8 @@ def main():
         
         print(f"Party Size: {party_size}, Party Level: {party_level}, Difficulty: {difficulty}")
         # TODO: Add logic to generate encounters based on the parsed arguments
+        generate_encounter(party_size, party_level, difficulty)
+            
 
         running = False  # Exit after one run for now
 
