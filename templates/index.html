@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PF2e_Encounter_Generator</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}">
+</head>
+<body>
+    <h1>Welcome to the PF2e Encounter Generator</h1>
+    <p>This tool helps you create encounters for Pathfinder 2nd Edition.</p>
+    <p>Check the documentation for more details on how to use it.</p>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Level</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for monster in monsters %}
+            <tr>
+                <td>{{ monster[0] }}</td>
+                <td>{{ monster[1] }}</td>
+                <td>{{ monster[2] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
