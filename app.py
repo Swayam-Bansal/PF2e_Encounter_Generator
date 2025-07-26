@@ -18,27 +18,27 @@ Features:
 import sqlite3, os, sys
 import argparse
 
-def get_party_size():
-    while True:
-        try:
-            party_size = int(input("Enter party size (1-4): "))
-            if 1 <= party_size <= 4:
-                return party_size
-            else:
-                print("Party size must be between 1 and 4.")
-        except ValueError:
-            print("Invalid input. Please enter a numeric value.")
+# def get_party_size():
+#     while True:
+#         try:
+#             party_size = int(input("Enter party size (1-4): "))
+#             if 1 <= party_size <= 4:
+#                 return party_size
+#             else:
+#                 print("Party size must be between 1 and 4.")
+#         except ValueError:
+#             print("Invalid input. Please enter a numeric value.")
 
-def get_party_level():
-    while True:
-        try:
-            party_level = int(input("Enter party level (1-20): "))
-            if 1 <= party_level <= 20:
-                return party_level
-            else:
-                print("Party level must be between 1 and 20.")
-        except ValueError:
-            print("Invalid input. Please enter a valid numeric value.")
+# def get_party_level():
+#     while True:
+#         try:
+#             party_level = int(input("Enter party level (1-20): "))
+#             if 1 <= party_level <= 20:
+#                 return party_level
+#             else:
+#                 print("Party level must be between 1 and 20.")
+#         except ValueError:
+#             print("Invalid input. Please enter a valid numeric value.")
 
 
 def main():
@@ -72,6 +72,7 @@ def main():
         party_level = args.party_level
         difficulty = args.difficulty
 
+        
         print(f"Party Size: {party_size}, Party Level: {party_level}, Difficulty: {difficulty}")
         # TODO: Add logic to generate encounters based on the parsed arguments
 
