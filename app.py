@@ -27,6 +27,8 @@ def generate_encounter(party_size, party_level, difficulty):
 	}
     xp_budget = party_size * threat_levels[difficulty]
     party_avg = party_level // party_size
+    print(f"Party Level Average: {party_avg}")
+    print(f"Total XP Budget: {xp_budget}")
     lower_monster_bound = party_avg - 4
     upper_monster_bound = party_avg + 4
 
@@ -49,31 +51,47 @@ def generate_encounter(party_size, party_level, difficulty):
 				SELECT name, level FROM temp_table ORDER BY RANDOM() LIMIT 1
 		''')
         monsterVals = monster.fetchone()
-        print(f"Name: {monsterVals[0]}, Level: {monsterVals[1]}")
-
-        xp_ratio = party_level - monsterVals[1]
+        xp_ratio = party_avg - monsterVals[1]
 		
         match xp_ratio:
                 case 4:
-                    xp_budget -= 10
+                    if xp_budget >= 10:
+                        xp_budget -= 10
+                        output.append(f"Name: {monsterVals[0]}, Level: {monsterVals[1]}, XP: 10")
                 case 3:
-                    xp_budget -= 15
+                    if xp_budget >= 15:
+                        xp_budget -= 15
+                        output.append(f"Name: {monsterVals[0]}, Level: {monsterVals[1]}, XP: 15")
                 case 2:
-                    xp_budget -= 20
+                    if xp_budget >= 20:
+                        xp_budget -= 20
+                        output.append(f"Name: {monsterVals[0]}, Level: {monsterVals[1]}, XP: 20")
                 case 1:
-                    xp_budget -= 30
+                    if xp_budget >= 30:
+                        xp_budget -= 30
+                        output.append(f"Name: {monsterVals[0]}, Level: {monsterVals[1]}, XP: 30")
                 case 0:
-                    xp_budget -= 40
+                    if xp_budget >= 40:
+                        xp_budget -= 40
+                        output.append(f"Name: {monsterVals[0]}, Level: {monsterVals[1]}, XP: 40")
                 case -1:
-                    xp_budget -= 60
+                    if xp_budget >= 60:
+                        xp_budget -= 60
+                        output.append(f"Name: {monsterVals[0]}, Level: {monsterVals[1]}, XP: 60")
                 case -2:
-                    xp_budget -= 80
+                    if xp_budget >= 80:
+                        xp_budget -= 80
+                        output.append(f"Name: {monsterVals[0]}, Level: {monsterVals[1]}, XP: 80")
                 case -3:
-                    xp_budget -= 120
+                    if xp_budget >= 120:
+                        xp_budget -= 120
+                        output.append(f"Name: {monsterVals[0]}, Level: {monsterVals[1]}, XP: 120")
                 case -4:
-                    xp_budget -= 160
-                    
-        output.append(monster)
+                    if xp_budget >= 160:
+                        xp_budget -= 160
+                        output.append(f"Name: {monsterVals[0]}, Level: {monsterVals[1]}, XP: 160")
+
+    print(output)
     monsterConn.close()
     return output
 
