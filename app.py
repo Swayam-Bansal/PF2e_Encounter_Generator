@@ -38,15 +38,14 @@ def create_database():
     for monster in monster_data:
         name = monster.get('name', 'Unknown') # Get monster name, default to 'Unknown'
         level = monster.get('level', 0) # Get monster level, default to 0
-        traits = monster.get('traits', []) # Get monster traits, default to empty list
-        description = monster.get('description', 'No description available') # Get monster description
+        #traits = monster.get('traits', []) # Get monster traits, default to empty list
+        #description = monster.get('description', 'No description available') # Get monster description
         # TODO: Add more fields as necessary
 
         try:
             db_cursor.execute('''
-                INSERT OR REPLACE INTO monsters (name, level, traits, description)
-                VALUES (?, ?, ?, ?)''',
-                (name, level, traits, description))
+                INSERT OR REPLACE INTO monsters VALUES (?, ?)''',
+                (name, level))
         except sqlite3.Error as e:
             print(f"Error inserting {name}: {e}")
 
@@ -73,34 +72,33 @@ def create_table(DB_NAME):
     conn.commit() 
     conn.close() 
 
-def get_party_size():
-    while True:
-        try:
-            party_size = int(input("Enter party size (1-4): "))
-            if 1 <= party_size <= 4:
-                return party_size
-            else:
-                print("Party size must be between 1 and 4.")
-        except ValueError:
-            print("Invalid input. Please enter a numeric value.")
+# def get_party_size():
+#     while True:
+#         try:
+#             party_size = int(input("Enter party size (1-4): "))
+#             if 1 <= party_size <= 4:
+#                 return party_size
+#             else:
+#                 print("Party size must be between 1 and 4.")
+#         except ValueError:
+#             print("Invalid input. Please enter a numeric value.")
 
-def get_party_level():
-    while True:
-        try:
-            party_level = int(input("Enter party level (1-20): "))
-            if 1 <= party_level <= 20:
-                return party_level
-            else:
-                print("Party level must be between 1 and 20.")
-        except ValueError:
-            print("Invalid input. Please enter a valid numeric value.")
+# def get_party_level():
+#     while True:
+#         try:
+#             party_level = int(input("Enter party level (1-20): "))
+#             if 1 <= party_level <= 20:
+#                 return party_level
+#             else:
+#                 print("Party level must be between 1 and 20.")
+#         except ValueError:
+#             print("Invalid input. Please enter a valid numeric value.")
 
 
 def main():
     if not os.path.exists('monsters.db'):
         print("Database not found, creating...")
         create_database()
-        create_table('monsters.db') # Create the monsters table
         print("Database 'monsters.db' created successfully.")
     else:
         print("Using existing database 'monsters.db'")
@@ -137,6 +135,7 @@ def main():
         party_level = args.party_level
         difficulty = args.difficulty
 
+        
         print(f"Party Size: {party_size}, Party Level: {party_level}, Difficulty: {difficulty}")
         # TODO: Add logic to generate encounters based on the parsed arguments
 
