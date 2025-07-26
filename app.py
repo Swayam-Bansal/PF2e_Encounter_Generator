@@ -126,7 +126,6 @@ def main():
         return args
 
     running = True
-
     while running:
         print("\nWelcome to the Pathfinder 2e Enemy Encounter Generator!")
         args = parse_arguments()
