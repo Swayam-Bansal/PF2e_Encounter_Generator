@@ -20,20 +20,19 @@ app.config["DATABASE"] = "creatures.db"
 def generate_encounter(party_size, party_level, difficulty):
     threat_levels = {"trivial": 10, "low": 15, "moderate": 20, "severe": 30, "extreme": 40}
     xp_budget = party_size * threat_levels[difficulty]
-    party_avg = party_level // party_size
+    # party_level = party_level // party_size
     output = []
 
-    if party_avg > 21:
+    if party_level > 21:
         raise ValueError("Party average level too high.")
-    if party_avg <= 1:
-        party_avg = 1
+    if party_level == 1 and threat_levels[difficulty] < 20:
         xp_budget = 20
-    elif party_avg <= 2:
+    elif party_level == 2 and threat_levels[difficulty] < 15:
         xp_budget = 15
 
     # Define lower and upper bounds for monster level selection
-    lower = max(party_avg - 4, 1)  # prevent negative or zero level
-    upper = party_avg + 4
+    lower = max(party_level - 4, -1)  # prevent access to monster level of lower then -1
+    upper = party_level + 4
 
     conn = sqlite3.connect(app.config["DATABASE"])
     cursor = conn.cursor()
@@ -54,7 +53,7 @@ def generate_encounter(party_size, party_level, difficulty):
             break
 
         name, level = monster
-        xp_ratio = party_avg - level
+        xp_ratio = party_level - level
 
         # Mapping XP costs based on the difference between party average and monster level
         cost_lookup = {
@@ -63,7 +62,7 @@ def generate_encounter(party_size, party_level, difficulty):
         }
 
         xp_cost = cost_lookup.get(xp_ratio)
-        if xp_cost and xp_budget >= xp_cost:
+        if xp_budget >= xp_cost:
             xp_budget -= xp_cost
             output.append((name, level, xp_cost))
         else:
