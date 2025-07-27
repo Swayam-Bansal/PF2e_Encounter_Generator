@@ -16,5 +16,81 @@ th, td {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+ body {
+      font-family: Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      transition: background-color 0.3s, color 0.3s;
+    }
 
+    :root {
+      --bg-color: #ffffff;
+      --text-color: #000000;
+    }
 
+    body.dark-mode {
+      --bg-color: #1e1e1e;
+      --text-color: #f1f1f1;
+    }
+
+    .selectable-button {
+      background-color: white;
+      color: black;
+      border: 2px solid #444;
+      padding: 8px 16px;
+      margin: 4px;
+      cursor: pointer;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+
+    .selectable-button.selected {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      max-width: 600px;
+      margin-bottom: 12px;
+    }
+
+    .toggle-switch {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .toggle-switch input[type="checkbox"] {
+      width: 40px;
+      height: 20px;
+      appearance: none;
+      background-color: #ccc;
+      border-radius: 20px;
+      position: relative;
+      outline: none;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .toggle-switch input[type="checkbox"]::before {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      background-color: white;
+      border-radius: 50%;
+      top: 1px;
+      left: 1px;
+      transition: transform 0.3s;
+    }
+
+    .toggle-switch input[type="checkbox"]:checked {
+      background-color: #007bff;
+    }
+
+    .toggle-switch input[type="checkbox"]:checked::before {
+      transform: translateX(20px);
+    }
