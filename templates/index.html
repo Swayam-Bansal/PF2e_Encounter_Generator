@@ -1,73 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PF2e_Encounter_Generator</title>
-    <link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PF2e Encounter Generator</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
-<body>
-    <h1>Welcome to the PF2e Encounter Generator</h1>
-    <p>This tool helps you create encounters for Pathfinder 2nd Edition.</p>
-    
-    <!-- Form to generate an encounter (POST request) -->
-    <form method="post" action="/">
-        <label>Party Size (1–8):
-            <input type="number" name="party_size" min="1" max="8" required>
-        </label><br><br>
+<body class="{{ 'dark-mode' if dark_mode else '' }}">
+  <h1>Welcome to the PF2e Encounter Generator</h1>
 
-        <label>Party Level:
-            <input type="number" name="party_level" min="1" max="160" required>
-        </label><br><br>
+  <div class="toggle-switch">
+    <label for="darkModeToggle">Dark Mode:</label>
+    <input type="checkbox" id="darkModeToggle" {% if dark_mode %}checked{% endif %}>
+  </div>
 
-        <label>Difficulty:
-            <select name="difficulty" required>
-                <option value="trivial">Trivial</option>
-                <option value="low">Low</option>
-                <option value="moderate">Moderate</option>
-                <option value="severe">Severe</option>
-                <option value="extreme">Extreme</option>
-            </select>
-        </label><br><br>
+  <form method="post" action="/">
+    <!-- Party Size -->
+    <label><strong>Party Size (1–8):</strong></label><br>
+    <div class="button-group" id="party-size-buttons">
+      {% for i in range(1, 9) %}
+        <button type="button" class="selectable-button {% if party_size == i %}selected{% endif %}" data-value="{{ i }}">{{ i }}</button>
+      {% endfor %}
+    </div>
+    <input type="hidden" name="party_size" id="party_size" value="{{ party_size or '' }}" required>
 
-        <input type="submit" value="Generate Encounter">
-    </form>
-    {% if error %}
-        <p style="color: red;"><strong>Error:</strong> {{ error }}</p>
-    {% endif %}
+    <!-- Party Level -->
+    <label><strong>Party Level (1–20):</strong></label><br>
+    <div class="button-group" id="party-level-buttons">
+      {% for i in range(1, 21) %}
+        <button type="button" class="selectable-button {% if party_level == i %}selected{% endif %}" data-value="{{ i }}">{{ i }}</button>
+      {% endfor %}
+    </div>
+    <input type="hidden" name="party_level" id="party_level" value="{{ party_level or '' }}" required>
 
-    <!-- check if "encounter" exists, if so render to page-->
-    {% if encounter %}
-        <h2>Generated Encounter</h2>
-        <ul>
-            {% for enemy in encounter %}
-                <li><strong>{{ enemy.name }}</strong> (Level {{ enemy.level }}) - {{ enemy.traits }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+    <!-- Difficulty -->
+    <label><strong>Difficulty:</strong></label><br>
+    <div class="button-group" id="difficulty-buttons">
+      {% for level in ['trivial', 'low', 'moderate', 'severe', 'extreme'] %}
+        <button type="button" class="selectable-button {% if difficulty == level %}selected{% endif %}" data-value="{{ level }}">{{ level.title() }}</button>
+      {% endfor %}
+    </div>
+    <input type="hidden" name="difficulty" id="difficulty" value="{{ difficulty or '' }}" required>
 
+    <input type="submit" value="Generate Encounter">
+  </form>
 
-    <!-- Display table of monsters generated-->
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Level</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for monster in monsters %}
-            <tr>
-                <td>{{ monster[0] }}</td>
-                <td>{{ monster[1] }}</td>
-                <td>{{ monster[2] }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    
+  {% if error %}
+    <p style="color: red;"><strong>Error:</strong> {{ error }}</p>
+  {% endif %}
 
-    
+  {% if encounter %}
+    <h2>Generated Encounter</h2>
+    <ul>
+        {% for enemy in encounter %}
+        <li><strong>{{ enemy[0] }}</strong> (Level {{ enemy[1] }}) - XP Cost: {{ enemy[2] }}</li>
+        {% endfor %}
+
+    </ul>
+  {% endif %}
+
+  <table>
+    <thead><tr><th>ID</th><th>Name</th><th>Level</th></tr></thead>
+    <tbody>
+      {% for monster in monsters %}
+      <tr>
+        <td>{{ monster[0] }}</td>
+        <td>{{ monster[1] }}</td>
+        <td>{{ monster[2] }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <script>
+    function setupButtonGroup(buttonGroupId, hiddenInputId) {
+      const buttons = document.querySelectorAll(`#${buttonGroupId} .selectable-button`);
+      const hiddenInput = document.getElementById(hiddenInputId);
+
+      buttons.forEach(button => {
+        button.addEventListener("click", () => {
+          buttons.forEach(btn => btn.classList.remove("selected"));
+          button.classList.add("selected");
+          hiddenInput.value = button.dataset.value;
+        });
+      });
+    }
+
+    setupButtonGroup("party-size-buttons", "party_size");
+    setupButtonGroup("party-level-buttons", "party_level");
+    setupButtonGroup("difficulty-buttons", "difficulty");
+
+    // Dark Mode Toggle
+    const toggle = document.getElementById("darkModeToggle");
+    toggle.addEventListener("change", function () {
+      document.body.classList.toggle("dark-mode", this.checked);
+      // Optional: persist dark mode across sessions with localStorage
+      localStorage.setItem("darkMode", this.checked);
+    });
+
+    //On Load apply changes
+    window.addEventListener("load", () => {
+      const saved = localStorage.getItem("darkMode") === "true";
+      document.body.classList.toggle("dark-mode", saved);
+      toggle.checked = saved;
+    });
+  </script>
 </body>
 </html>
