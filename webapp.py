@@ -35,44 +35,40 @@ def get_all_monsters():
         connection.close()
 
 # Route to serve the index page
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def index():
     monsters = get_all_monsters()
-    return render_template("index.html", monsters=monsters)
+    
+    if request.method == "POST":
+        try:
+            # Parse form inputs
+            party_size = int(request.form["party_size"])
+            party_level = int(request.form["party_level"])
+            difficulty = request.form["difficulty"]
 
-# route to generate an encounter based on party level and XP budget
-@app.route("/generate")
-def generate_form():
-    return render_template("generate.html")
+            # Validate input ranges
+            if not (1 <= party_size <= 8):
+                raise ValueError("Party size must be between 1 and 8.")
 
-@app.route("/generate", methods=["POST"])
-def generate_encounter_view():
-    try:
-        # Parse form inputs
-        party_size = int(request.form["party_size"])
-        party_level = int(request.form["party_level"])
-        difficulty = request.form["difficulty"]
+            if not (1 <= party_level <= 160):
+                raise ValueError("Party level must be between 1 and 160.")
 
-        # Validate input ranges
-        if not (1 <= party_size <= 8):
-            raise ValueError("Party size must be between 1 and 8.")
+            if difficulty not in ["trivial", "low", "moderate", "severe", "extreme"]:
+                raise ValueError("Invalid difficulty selection.")
 
-        if not (1 <= party_level <= 160):
-            raise ValueError("Party level must be between 1 and 160.")
+            # Generate encounter
+            output = generate_encounter(party_size, party_level, difficulty)
+            return render_template("index.html", encounter=output)
 
-        if difficulty not in ["trivial", "low", "moderate", "severe", "extreme"]:
-            raise ValueError("Invalid difficulty selection.")
+        except ValueError as ve:
+            return render_template("index.html", error="Value Error: " + str(ve))
 
-        # Generate encounter
-        output = generate_encounter(party_size, party_level, difficulty)
+        except Exception as e:
+            return render_template("index.html", error="Something went wrong: " + str(e))
 
-        return render_template("results.html", encounter=output)
 
-    except ValueError as ve:
-        return render_template("generate.html", error=str(ve))
-
-    except Exception as e:
-        return render_template("generate.html", error="Something went wrong: " + str(e))
+    else:
+        return render_template("index.html", monsters=monsters)
 
 if __name__ == "__main__":
     app.run(debug=True) # This will run the Flask web app in debug mode
