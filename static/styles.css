@@ -7,6 +7,10 @@ table {
     overflow: hidden;
 }
 
+li {
+  text-align: left;
+  list-style-type: none;
+}
 
 th, td {
     border: 1px solid #aaa;
@@ -16,11 +20,18 @@ th, td {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
  body {
       font-family: Arial, sans-serif;
       background-color: var(--bg-color);
       color: var(--text-color);
       transition: background-color 0.3s, color 0.3s;
+      display: none;
+      padding-top: 20;
+      flex-direction: column;
+      align-content: center;
+      align-items: center;
+      text-align: center;
     }
 
     :root {
@@ -54,6 +65,7 @@ th, td {
       flex-wrap: wrap;
       max-width: 600px;
       margin-bottom: 12px;
+      justify-content: center;
     }
 
     .toggle-switch {
