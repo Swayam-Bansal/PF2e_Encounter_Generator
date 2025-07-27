@@ -15,7 +15,7 @@ Features:
 """
 
 # Import necessary libraries
-import sqlite3, os, sys
+import sqlite3, sys
 import argparse
 
 def generate_encounter(party_size, party_level, difficulty):
@@ -27,31 +27,34 @@ def generate_encounter(party_size, party_level, difficulty):
 	}
     xp_budget = party_size * threat_levels[difficulty]
     party_avg = party_level // party_size
+    if party_avg > 21:
+        print("Error: Party average level too high.")
+        sys.exit(1)
     print(f"Party Level Average: {party_avg}")
     print(f"Total XP Budget: {xp_budget}")
     lower_monster_bound = party_avg - 4
     upper_monster_bound = party_avg + 4
-
+    output = []
     monsterConn = sqlite3.connect("creatures.db")
     monsterCurs = monsterConn.cursor()
 
-    temp_table_creation = '''
-            CREATE TEMP TABLE temp_table AS
-			SELECT *
-            FROM monsters 
-			WHERE level BETWEEN ? AND ?
+    sorted_table_creation = '''
+            CREATE TABLE IF NOT EXISTS sorted_table AS
+            SELECT *
+            FROM monsters
+            WHERE level BETWEEN ? AND ?
     '''
-    output = []
+    
+    monsterCurs.execute('''DROP TABLE IF EXISTS sorted_table''')
+    monsterCurs.execute(sorted_table_creation, (lower_monster_bound, upper_monster_bound))
 
-    monsterCurs.execute(temp_table_creation, (lower_monster_bound, upper_monster_bound))
-
-    while xp_budget > 0:
+    while xp_budget >= 10:
         
         monster = monsterCurs.execute('''
-				SELECT name, level FROM temp_table ORDER BY RANDOM() LIMIT 1
+				SELECT name, level FROM sorted_table ORDER BY RANDOM() LIMIT 1
 		''')
         monsterVals = monster.fetchone()
-        xp_ratio = party_avg - monsterVals[1]
+        xp_ratio = party_avg - monsterVals[1] # Party average - level of monster
 		
         match xp_ratio:
                 case 4:
@@ -90,37 +93,38 @@ def generate_encounter(party_size, party_level, difficulty):
                     if xp_budget >= 160:
                         xp_budget -= 160
                         output.append(f"Name: {monsterVals[0]}, Level: {monsterVals[1]}, XP: 160")
+                case _:
+                    continue
+                
 
     print(output)
+    monsterConn.commit()
     monsterConn.close()
     return output
 
-def main():
-
-    def parse_arguments():
+def parse_arguments():
         parser = argparse.ArgumentParser(description="Pathfinder 2e Enemy Encounter Generator")
-        parser.add_argument('--party-size', type=int, help="Size of the party (1-4)", required=True)
-        parser.add_argument('--party-level', type=int, help="Level of the party (1-20)", required=True)
+        parser.add_argument('--party-size', type=int, help="Size of the party (1-8)", required=True)
+        parser.add_argument('--party-level', type=int, help="Combined Party Character Levels", required=True)
         parser.add_argument('--difficulty', type=str, choices=['trivial', 'low', 'moderate', 'severe', 'extreme'], 
                             help="Difficulty level of the encounter", required=True)
-        args = parser.parse_args()
+        return parser.parse_args()
+
+def main(args):
+
+    running = True
+    while running:
+        print("\nWelcome to the Pathfinder 2e Enemy Encounter Generator!\n")
 
         # Validate party size
-        if not (1 <= args.party_size <= 4):
+        if not (1 <= args.party_size <= 8):
             print("Error: Party size must be between 1 and 4.")
             sys.exit(1)
 
         # Validate party level
-        if not (1 <= args.party_level <= 20):
-            print("Error: Party level must be between 1 and 20.")
+        if (args.party_level >= 200):
+            print("Error: Party level too high.")
             sys.exit(1)
-
-        return args
-
-    running = True
-    while running:
-        print("\nWelcome to the Pathfinder 2e Enemy Encounter Generator!")
-        args = parse_arguments()
 
         party_size = args.party_size
         party_level = args.party_level
@@ -137,5 +141,6 @@ def main():
     print("Encounter generation complete. Thank you for using the Pathfinder 2e Enemy Encounter Generator!")
         
 if __name__ == '__main__':
-    main()
+    cli_args = parse_arguments()
+    main(cli_args)
 
