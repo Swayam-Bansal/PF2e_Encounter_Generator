@@ -1,13 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script>
+    (function flashProtection () {
+      try {
+        const theme = localStorage.getItem("darkMode") === true;
+        if (theme === true) {
+          document.body.classList.toggle("dark-mode", theme);
+        }
+      } catch (e) {
+      // Fallback if localStorage fails
+      }
+    })();
+  </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PF2e Encounter Generator</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <!-- Inline script to prevent white flash -->
 </head>
 <body class="{{ 'dark-mode' if dark_mode else '' }}">
-  <h1>Welcome to the PF2e Encounter Generator</h1>
+  <h1>Pathfinder 2nd Edition Encounter Generator</h1>
 
   <div class="toggle-switch">
     <label for="darkModeToggle">Dark Mode:</label>
@@ -103,6 +116,7 @@
       const saved = localStorage.getItem("darkMode") === "true";
       document.body.classList.toggle("dark-mode", saved);
       toggle.checked = saved;
+      document.body.style.display = "flex";
     });
   </script>
 </body>
