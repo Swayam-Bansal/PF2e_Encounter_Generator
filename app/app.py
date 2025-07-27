@@ -156,4 +156,4 @@ def index():
     )
 
 if __name__ == "__main__":
-    app.run(debug=True)  # This will run the Flask web app in debug mode
+    app.run()  # This will run the Flask web app in debug mode
