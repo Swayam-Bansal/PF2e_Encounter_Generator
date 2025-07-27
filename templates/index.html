@@ -9,8 +9,45 @@
 <body>
     <h1>Welcome to the PF2e Encounter Generator</h1>
     <p>This tool helps you create encounters for Pathfinder 2nd Edition.</p>
-    <p>Check the documentation for more details on how to use it.</p>
     
+    <!-- Form to generate an encounter (POST request) -->
+    <form method="post" action="/">
+        <label>Party Size (1–8):
+            <input type="number" name="party_size" min="1" max="8" required>
+        </label><br><br>
+
+        <label>Party Level:
+            <input type="number" name="party_level" min="1" max="160" required>
+        </label><br><br>
+
+        <label>Difficulty:
+            <select name="difficulty" required>
+                <option value="trivial">Trivial</option>
+                <option value="low">Low</option>
+                <option value="moderate">Moderate</option>
+                <option value="severe">Severe</option>
+                <option value="extreme">Extreme</option>
+            </select>
+        </label><br><br>
+
+        <input type="submit" value="Generate Encounter">
+    </form>
+    {% if error %}
+        <p style="color: red;"><strong>Error:</strong> {{ error }}</p>
+    {% endif %}
+
+    <!-- check if "encounter" exists, if so render to page-->
+    {% if encounter %}
+        <h2>Generated Encounter</h2>
+        <ul>
+            {% for enemy in encounter %}
+                <li><strong>{{ enemy.name }}</strong> (Level {{ enemy.level }}) - {{ enemy.traits }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+
+    <!-- Display table of monsters generated-->
     <table>
         <thead>
             <tr>
@@ -29,5 +66,8 @@
             {% endfor %}
         </tbody>
     </table>
+    
+
+    
 </body>
 </html>
