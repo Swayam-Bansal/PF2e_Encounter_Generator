@@ -26,72 +26,88 @@ def generate_encounter(party_size, party_level, difficulty):
                      "extreme": 40
 	}
     xp_budget = party_size * threat_levels[difficulty]
-    party_avg = party_level // party_size
+    party_avg = party_level // party_size # Party average used to determine levels of generated enemies
     if party_avg > 21:
         print("Error: Party average level too high.")
         sys.exit(1)
+    if party_avg <= 1:
+        party_avg = 1
+        xp_budget = 20
+    elif party_avg <= 2:
+        xp_budget = 15
     print(f"Party Level Average: {party_avg}")
     print(f"Total XP Budget: {xp_budget}")
-    lower_monster_bound = party_avg - 4
-    upper_monster_bound = party_avg + 4
+    lower_monster_bound = party_avg - 4 # Lowest possible monster level for encounter
+    upper_monster_bound = party_avg + 4 # Highest possible monster level for encounter
     output = []
     monsterConn = sqlite3.connect("creatures.db")
     monsterCurs = monsterConn.cursor()
 
+    # Created new table from monsters table based on the lower and upper monster perameters
     sorted_table_creation = '''
             CREATE TABLE IF NOT EXISTS sorted_table AS
             SELECT *
             FROM monsters
             WHERE level BETWEEN ? AND ?
     '''
-    
     monsterCurs.execute('''DROP TABLE IF EXISTS sorted_table''')
     monsterCurs.execute(sorted_table_creation, (lower_monster_bound, upper_monster_bound))
 
     while xp_budget >= 10:
-        
+        # Select random enemy from sorted table
         monster = monsterCurs.execute('''
 				SELECT name, level FROM sorted_table ORDER BY RANDOM() LIMIT 1
 		''')
         monsterVals = monster.fetchone()
-        xp_ratio = party_avg - monsterVals[1] # Party average - level of monster
-		
+
+        # Party average - level of monster
+        # Used to determine how much XP a monster is worth
+        xp_ratio = party_avg - monsterVals[1]
         match xp_ratio:
                 case 4:
                     if xp_budget >= 10:
                         xp_budget -= 10
+                        print(f"Name: {monsterVals[0]}, Level: {monsterVals[1]}, XP: 10")
                         output.append(f"Name: {monsterVals[0]}, Level: {monsterVals[1]}, XP: 10")
                 case 3:
                     if xp_budget >= 15:
                         xp_budget -= 15
+                        print(f"Name: {monsterVals[0]}, Level: {monsterVals[1]}, XP: 15")
                         output.append(f"Name: {monsterVals[0]}, Level: {monsterVals[1]}, XP: 15")
                 case 2:
                     if xp_budget >= 20:
                         xp_budget -= 20
+                        print(f"Name: {monsterVals[0]}, Level: {monsterVals[1]}, XP: 20")
                         output.append(f"Name: {monsterVals[0]}, Level: {monsterVals[1]}, XP: 20")
                 case 1:
                     if xp_budget >= 30:
                         xp_budget -= 30
+                        print(f"Name: {monsterVals[0]}, Level: {monsterVals[1]}, XP: 30")
                         output.append(f"Name: {monsterVals[0]}, Level: {monsterVals[1]}, XP: 30")
                 case 0:
                     if xp_budget >= 40:
                         xp_budget -= 40
+                        print(f"Name: {monsterVals[0]}, Level: {monsterVals[1]}, XP: 40")
                         output.append(f"Name: {monsterVals[0]}, Level: {monsterVals[1]}, XP: 40")
                 case -1:
                     if xp_budget >= 60:
                         xp_budget -= 60
+                        print(f"Name: {monsterVals[0]}, Level: {monsterVals[1]}, XP: 60")
                         output.append(f"Name: {monsterVals[0]}, Level: {monsterVals[1]}, XP: 60")
                 case -2:
                     if xp_budget >= 80:
                         xp_budget -= 80
+                        print(f"Name: {monsterVals[0]}, Level: {monsterVals[1]}, XP: 80")
                         output.append(f"Name: {monsterVals[0]}, Level: {monsterVals[1]}, XP: 80")
                 case -3:
                     if xp_budget >= 120:
                         xp_budget -= 120
+                        print(f"Name: {monsterVals[0]}, Level: {monsterVals[1]}, XP: 120")
                         output.append(f"Name: {monsterVals[0]}, Level: {monsterVals[1]}, XP: 120")
                 case -4:
                     if xp_budget >= 160:
                         xp_budget -= 160
+                        print(f"Name: {monsterVals[0]}, Level: {monsterVals[1]}, XP: 160")
                         output.append(f"Name: {monsterVals[0]}, Level: {monsterVals[1]}, XP: 160")
                 case _:
                     continue
@@ -100,7 +116,6 @@ def generate_encounter(party_size, party_level, difficulty):
     print(output)
     monsterConn.commit()
     monsterConn.close()
-    return output
 
 def parse_arguments():
         parser = argparse.ArgumentParser(description="Pathfinder 2e Enemy Encounter Generator")
