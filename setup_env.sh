@@ -19,7 +19,7 @@ if [[ "$PYTHON_VER" != *"$PYTHON_VERSION"* ]]; then
     exit 1
 fi
 # Create virtual environment
-$PYTHON -m venv venv
+$PYTHON -m venv bootDev_hackathon2025
 # Activate venv based on platform
 if [ "$PLATFORM" = "windows" ]; then
     ACTIVATE_SCRIPT="venv/Scripts/activate"
