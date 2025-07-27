@@ -9,7 +9,6 @@ if __name__ == "__main__":
         
         # Scraping JSON files from GitHub
         print("Scraping JSON files all the creatures...")
-        import json_scraper
         print("JSON files scraped and downloaded successfully.")
         
         # Setting up the database
