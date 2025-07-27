@@ -116,6 +116,7 @@ def generate_encounter(party_size, party_level, difficulty):
     print(output)
     monsterConn.commit()
     monsterConn.close()
+    return output
 
 def parse_arguments():
         parser = argparse.ArgumentParser(description="Pathfinder 2e Enemy Encounter Generator")
