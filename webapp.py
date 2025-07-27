@@ -21,7 +21,7 @@ def get_all_monsters():
     try:
         connection = sqlite3.connect(app.config["DATABASE"])
         cursor = connection.cursor()
-        cursor.execute("SELECT id, name, level FROM monsters")
+        cursor.execute("SELECT id, name, level FROM sorted_table")
         results = cursor.fetchall()
         print("DEBUG: Monsters fetched from DB:", results)
         return results
