@@ -1,32 +1,22 @@
 # Pathfinder 2e Encounter Generator
 
-A CLI-based encounter generator for Pathfinder 2e, built for the July 2025 Bootdotdev Hackathon.
+A web hosted enemy encounter generator for Pathfinder 2e, built for the July 2025 Bootdotdev Hackathon.
 
 ## Features
 
 - Generate balanced encounters for Pathfinder 2e
 - Customizable party size and level
 - Random monster selection based on difficulty
-- Python backend with easy-to-use CLI interface
-
-## Requirements
-
-- Python 3.10+
-- [Optional] Virtual environment (recommended)
-
-## Installation
-
-```bash
-git clone https://github.com/ySwayam-Bansal/PF2e_Encounter_Generator.git
-cd PF2e_Encounter_Generator
-pip install -r requirements.txt
-```
+- Python and Sqlite backend with a Flask based frontend
 
 ## Usage
 
-```bash
-python app.py --party-size 4 --party-level 5 --difficulty moderate
-```
+Follow this link: [https://pf2e-encounter-generator.onrender.com/] (If page doest not load immediately, please wait 15-30 seconds for the site to come online)
+Select:
+- Party size (8 characters max)
+- Party level (Assumes all characters are the same level)
+- Difficulty
+Click the "Generate Encounter" to randomly generate a combat encounter appropriate for the party based on Pathfinder 2e's encounter building guidelines.
 
 ## Contributing
 
@@ -41,3 +31,4 @@ MIT License
 - Pathfinder 2e SRD
 - Bootdotdev Hackathon July 2025
 - Python community
+- Enemy data sourced from [https://github.com/Pf2eToolsOrg/Pf2eTools]
